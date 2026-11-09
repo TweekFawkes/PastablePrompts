@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pastable Prompts</title>
+    <script type="module" src="/src/main.ts"></script>
+  </head>
+
+  <body>
+    <div id="app">
+      <div id="main">
+        <section id="editor-pane" class="pane">
+          <div id="editor-bar" class="bar">
+            <span id="save-status" class="save-status"></span>
+            <button id="paste-button" class="paste-button" title="Copy the text above and paste it into the terminal below. It won't press Enter.">
+              Copy &amp; Paste <kbd id="paste-kbd"></kbd>
+            </button>
+          </div>
+          <div id="editor-host"></div>
+          <div id="toast" class="toast" hidden></div>
+        </section>
+
+        <div id="divider" title="Drag to resize. Double-click to reset."></div>
+
+        <section id="terminal-pane" class="pane">
+          <div id="terminal-bar" class="bar">
+            <button id="project-button" class="project-button">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round" aria-hidden="true">
+                <path d="M1.75 3.75a1 1 0 0 1 1-1h3.4l1.5 1.6h5.6a1 1 0 0 1 1 1v6.9a1 1 0 0 1-1 1H2.75a1 1 0 0 1-1-1z" />
+              </svg>
+              <span id="project-name"></span>
+              <span class="chevron">▾</span>
+            </button>
+          </div>
+          <div id="confirm-bar" class="confirm-bar" hidden></div>
+          <div id="terminal-host">
+            <div id="terminal-empty" class="terminal-empty" hidden>
+              <p>No terminal open.</p>
+              <button id="terminal-new">New terminal</button>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <aside id="sidebar"></aside>
+    </div>
+  </body>
+</html>

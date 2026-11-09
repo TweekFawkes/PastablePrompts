@@ -1,0 +1,570 @@
+:root {
+  --bg: #1b1d23;
+  --bg-deep: #121418;
+  --bg-bar: #16181d;
+  --bg-elev: #22252d;
+  --bg-hover: #2a2e37;
+  --border: #2c3039;
+  --fg: #d7dae0;
+  --fg-dim: #8b919c;
+  --fg-faint: #555b66;
+  --accent: #e0a050;
+  --accent-strong: #f0b468;
+  --accent-soft: rgba(224, 160, 80, 0.32);
+  --accent-ink: #1b1408;
+  --star: #f5c451;
+  --danger: #e06c75;
+  --selection: #3a4150;
+  --active-line: rgba(255, 255, 255, 0.03);
+  --match: rgba(224, 160, 80, 0.16);
+  --search-match: rgba(97, 175, 239, 0.22);
+  --search-match-border: rgba(97, 175, 239, 0.5);
+  --scroll-track: rgba(255, 255, 255, 0.05);
+  --scroll-thumb: rgba(255, 255, 255, 0.18);
+  --scroll-thumb-hover: rgba(255, 255, 255, 0.32);
+  --ui: -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", "Ubuntu", sans-serif;
+  --mono: "SF Mono", Menlo, Monaco, "Cascadia Mono", Consolas, "DejaVu Sans Mono", monospace;
+  --sidebar-w: 300px;
+  --bar-h: 34px;
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--fg);
+  font: 13px/1.4 var(--ui);
+  -webkit-font-smoothing: antialiased;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+kbd {
+  font: inherit;
+  opacity: 0.7;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+#app {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--sidebar-w);
+  height: 100vh;
+}
+
+#app.no-sidebar {
+  grid-template-columns: minmax(0, 1fr) 0;
+}
+
+#app.no-sidebar #sidebar {
+  display: none;
+}
+
+#main {
+  display: grid;
+  /* An explicit column, or a long row of tabs widens it under the sidebar. */
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr) 5px minmax(0, 2fr);
+  min-width: 0;
+  min-height: 0;
+}
+
+.pane {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  position: relative;
+}
+
+/* Tab bars */
+
+.bar {
+  display: flex;
+  align-items: stretch;
+  height: var(--bar-h);
+  flex: none;
+  background: var(--bg-bar);
+  border-bottom: 1px solid var(--border);
+}
+
+.tabs {
+  display: flex;
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.tab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 220px;
+  padding: 0 6px 0 12px;
+  border-right: 1px solid var(--border);
+  color: var(--fg-dim);
+  cursor: default;
+  white-space: nowrap;
+}
+
+.tab:hover {
+  background: var(--bg-elev);
+}
+
+.tab.active {
+  background: var(--bg);
+  color: var(--fg);
+  box-shadow: inset 0 2px 0 var(--accent);
+}
+
+#terminal-pane .tab.active {
+  background: var(--bg-deep);
+}
+
+.tab-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tab-rename {
+  width: 150px;
+  min-width: 0;
+  padding: 2px 5px;
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  background: var(--bg-deep);
+  color: var(--fg);
+  font: inherit;
+  outline: none;
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+.tab-close {
+  width: 18px;
+  height: 18px;
+  display: grid;
+  place-items: center;
+  border-radius: 4px;
+  font-size: 14px;
+  visibility: hidden;
+}
+
+.tab:hover .tab-close,
+.tab.active .tab-close {
+  visibility: visible;
+}
+
+.tab-close:hover {
+  background: var(--bg-hover);
+  color: var(--fg);
+}
+
+.tab-add {
+  flex: none;
+  width: 32px;
+  background: none;
+  border: none;
+  color: var(--fg-dim);
+  font-size: 17px;
+}
+
+.tab-add:hover {
+  color: var(--fg);
+  background: var(--bg-elev);
+}
+
+/* The current project, at the right end of the terminal tabs. */
+.project-button {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 40%;
+  margin-left: auto;
+  padding: 0 12px;
+  border: none;
+  border-left: 1px solid var(--border);
+  background: none;
+  color: var(--fg-dim);
+}
+
+.project-button:hover {
+  background: var(--bg-elev);
+  color: var(--fg);
+}
+
+.project-button.none {
+  color: var(--fg-faint);
+}
+
+.project-button svg {
+  flex: none;
+}
+
+#project-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.project-button .chevron {
+  font-size: 10px;
+  opacity: 0.7;
+}
+
+/* Editor pane */
+
+#editor-bar .save-status {
+  margin-left: auto;
+  align-self: center;
+  padding: 0 10px;
+  color: var(--fg-faint);
+  font-size: 11.5px;
+  white-space: nowrap;
+}
+
+.save-status.error {
+  color: var(--danger);
+}
+
+.paste-button {
+  flex: none;
+  margin: 4px 6px;
+  padding: 0 14px;
+  border: none;
+  border-radius: 5px;
+  background: var(--accent);
+  color: var(--accent-ink);
+  font-weight: 600;
+  white-space: nowrap;
+  transition: background 0.12s, transform 0.08s;
+}
+
+.paste-button:hover {
+  background: var(--accent-strong);
+}
+
+.paste-button:active,
+.paste-button.flash {
+  transform: scale(0.97);
+}
+
+#editor-host {
+  flex: 1;
+  min-height: 0;
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+.toast {
+  position: absolute;
+  right: 12px;
+  bottom: 10px;
+  z-index: 5;
+  max-width: 70%;
+  padding: 7px 12px;
+  border-radius: 6px;
+  background: var(--bg-elev);
+  border: 1px solid var(--border);
+  color: var(--fg);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+  pointer-events: none;
+}
+
+/* Divider between editor and terminal */
+
+#divider {
+  cursor: row-resize;
+  background: var(--border);
+  position: relative;
+}
+
+#divider::after {
+  content: "";
+  position: absolute;
+  inset: -4px 0;
+}
+
+#divider:hover,
+#main.dragging #divider {
+  background: var(--accent);
+}
+
+#main.dragging {
+  cursor: row-resize;
+}
+
+/* Terminal pane */
+
+#terminal-host {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+  background: var(--bg-deep);
+}
+
+.term {
+  position: absolute;
+  inset: 0;
+  padding: 6px 4px 4px 10px;
+  overflow: hidden;
+  /* ghostty-web makes this element contenteditable and focuses it when you
+     switch or open tabs, so WebKit drew a blinking text caret at its left
+     edge. The terminal draws its own cursor. */
+  caret-color: transparent;
+}
+
+.term.hidden {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* Sits in the 15px the terminal leaves free on its right. */
+.term-scrollbar {
+  position: absolute;
+  top: 6px;
+  bottom: 4px;
+  right: 3px;
+  width: 10px;
+  border-radius: 5px;
+}
+
+.term-scrollbar:hover,
+.term-scrollbar.dragging {
+  background: var(--scroll-track);
+}
+
+.term-thumb {
+  width: 100%;
+  border-radius: 5px;
+  background: var(--scroll-thumb);
+}
+
+.term-scrollbar:hover .term-thumb {
+  background: var(--scroll-thumb-hover);
+}
+
+.term-scrollbar.dragging .term-thumb {
+  background: var(--accent);
+}
+
+.terminal-empty {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  color: var(--fg-dim);
+}
+
+.terminal-empty button,
+.confirm-bar button {
+  padding: 5px 12px;
+  border-radius: 5px;
+  border: 1px solid var(--border);
+  background: var(--bg-elev);
+}
+
+.terminal-empty button:hover,
+.confirm-bar button:hover {
+  background: var(--bg-hover);
+}
+
+.confirm-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: none;
+  padding: 8px 10px;
+  background: #2b2418;
+  border-bottom: 1px solid #4a3a20;
+}
+
+.confirm-bar span {
+  flex: 1;
+}
+
+.confirm-bar button.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-ink);
+  font-weight: 600;
+}
+
+/* Sidebar */
+
+#sidebar {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: var(--bg-bar);
+  border-left: 1px solid var(--border);
+}
+
+.search {
+  flex: none;
+  margin: 8px;
+  padding: 6px 9px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--fg);
+  font: inherit;
+  outline: none;
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+.search:focus {
+  border-color: var(--accent);
+}
+
+.prompt-list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding-bottom: 8px;
+}
+
+.section-heading {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 12px 4px;
+  background: var(--bg-bar);
+  color: var(--fg-dim);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.section-heading .count {
+  color: var(--fg-faint);
+  font-weight: 500;
+}
+
+.row {
+  position: relative;
+  padding: 5px 12px;
+  border-left: 2px solid transparent;
+  cursor: default;
+}
+
+.row:hover {
+  background: var(--bg-elev);
+}
+
+.row.selected {
+  background: var(--bg-hover);
+}
+
+.row.open {
+  border-left-color: var(--accent);
+}
+
+.row-title,
+.row-sub {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.row-title {
+  font-family: var(--mono);
+  font-size: 12.5px;
+}
+
+.row-sub {
+  color: var(--fg-faint);
+  font-size: 11.5px;
+}
+
+/* Star and Paste float over the row's right edge on hover, so titles get
+   the full width the rest of the time. */
+.row-actions {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  display: none;
+  align-items: center;
+  gap: 2px;
+  padding: 0 6px 0 24px;
+  background: linear-gradient(to right, transparent, var(--bg-elev) 20px);
+}
+
+.row.selected .row-actions {
+  background: linear-gradient(to right, transparent, var(--bg-hover) 20px);
+}
+
+.row:hover .row-actions,
+.row.selected .row-actions {
+  display: flex;
+}
+
+.row-actions button {
+  border: none;
+  background: none;
+  border-radius: 4px;
+  color: var(--fg-dim);
+  padding: 3px 6px;
+}
+
+.row-actions button:hover {
+  background: var(--bg-hover);
+  color: var(--fg);
+}
+
+.row-star {
+  font-size: 14px;
+}
+
+.row-star.on {
+  color: var(--star);
+}
+
+.row-paste {
+  font-size: 11.5px;
+}
+
+.list-note {
+  padding: 10px 12px;
+  color: var(--fg-faint);
+  font-size: 12px;
+}
+
+.sidebar-footer {
+  flex: none;
+  padding: 7px 12px;
+  border-top: 1px solid var(--border);
+  color: var(--fg-faint);
+  font-size: 11px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
